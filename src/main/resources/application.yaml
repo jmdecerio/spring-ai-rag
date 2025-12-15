@@ -10,6 +10,6 @@ spring:
          model: text-embedding-3-small
 sfg:
   aiapp:
-    vectorStorePath: /tmp/vectorstore.json
+    vectorStorePath: src/main/resources/vectorstore.json
     documentsToLoad:
       - classpath:/movies500Trimmed.csv
