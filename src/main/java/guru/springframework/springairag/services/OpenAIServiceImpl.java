@@ -35,6 +35,5 @@ public class OpenAIServiceImpl implements OpenAIService {
                 .user(question.question())
                 .call()
                 .entity(Answer.class);
-
     }
 }
