@@ -3,6 +3,7 @@ package guru.springframework.springairag.services;
 import guru.springframework.springairag.model.Answer;
 import guru.springframework.springairag.model.Question;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -24,27 +25,16 @@ import java.util.Map;
 @Service
 public class OpenAIServiceImpl implements OpenAIService {
 
-    private final ChatModel chatModel;
+    private final ChatClient chatClient;
     private final SimpleVectorStore vectorStore;
-
-    @Value("classpath:/templates/rag-prompt-template-meta.st")
-    private Resource ragPromptTemplate;
 
     @Override
     public Answer getAnswer(Question question) {
 
-        List<Document> documents = vectorStore.similaritySearch(SearchRequest.builder()
-                .query(question.question()).topK(5).build());
-        List<String> contentList = documents.stream().map(Document::getContent).toList();
+        return chatClient.prompt()
+                .user(question.question())
+                .call()
+                .entity(Answer.class);
 
-        PromptTemplate promptTemplate = new PromptTemplate(ragPromptTemplate);
-        Prompt prompt = promptTemplate.create(Map.of("input", question.question(), "documents",
-                String.join("\n", contentList)));
-
-        contentList.forEach(System.out::println);
-
-        ChatResponse response = chatModel.call(prompt);
-
-        return new Answer(response.getResult().getOutput().getContent());
     }
 }
