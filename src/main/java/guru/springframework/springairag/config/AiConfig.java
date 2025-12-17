@@ -2,6 +2,7 @@ package guru.springframework.springairag.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.preretrieval.query.expansion.MultiQueryExpander;
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
 import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
@@ -31,9 +32,12 @@ public class AiConfig {
                         TranslationQueryTransformer.builder()
                                 .chatClientBuilder(transformerBuilder)
                                 .targetLanguage("English")
-                                .build(),
-                        RewriteQueryTransformer.builder()
+                                .build())
+                .queryExpander(
+                        MultiQueryExpander.builder()
                                 .chatClientBuilder(transformerBuilder)
+                                .numberOfQueries(5)
+                                .includeOriginal(false)
                                 .build())
                 .build();
 
